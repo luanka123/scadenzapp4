@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScadenzApp - Trasforma le Scadenze in Gioco!</title>
+    <style>
+        :root {
+            --color-primary: #6366f1;
+            --color-primary-hover: #4f46e5;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+            --color-bg: #f8fafc;
+            --color-surface: #ffffff;
+            --color-text: #1e293b;
+            --color-text-light: #64748b;
+            --color-border: #e2e8f0;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--color-text);
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: var(--color-bg);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            min-height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .header .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 16px;
+            background: white;
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--color-primary);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--color-text-light);
+            margin-top: 4px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* Onboarding Screen */
+        .onboarding {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .onboarding-avatar {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            box-shadow: var(--shadow);
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+        }
+
+        .onboarding h2 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            color: var(--color-text);
+        }
+
+        .onboarding p {
+            color: var(--color-text-light);
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--color-text);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--color-border);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .avatar-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .avatar-option {
+            padding: 16px;
+            background: white;
+            border: 3px solid var(--color-border);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .avatar-option:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow);
+        }
+
+        .avatar-option.selected {
+            border-color: var(--color-primary);
+            background: #eef2ff;
+        }
+
+        .avatar-img {
+            font-size: 48px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .avatar-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--color-text-light);
+            text-align: center;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-success {
+            background: var(--color-success);
+            color: white;
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--color-primary);
+            border: 2px solid var(--color-primary);
+        }
+
+        /* Scadenza Card */
+        .scadenza-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--color-primary);
+            transition: all 0.3s;
+        }
+
+        .scadenza-card:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .scadenza-card.urgente {
+            border-left-color: var(--color-danger);
+        }
+
+        .scadenza-card.imminente {
+            border-left-color: var(--color-warning);
+        }
+
+        .scadenza-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .scadenza-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--color-text);
+        }
+
+        .scadenza-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-urgente {
+            background: #fee2e2;
+            color: var(--color-danger);
+        }
+
+        .badge-imminente {
+            background: #fef3c7;
+            color: var(--color-warning);
+        }
+
+        .badge-ok {
+            background: #d1fae5;
+            color: var(--color-success);
+        }
+
+        .scadenza-info {
+            display: flex;
+            gap: 16px;
+            font-size: 14px;
+            color: var(--color-text-light);
+            margin-bottom: 12px;
+        }
+
+        .scadenza-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-complete {
+            background: var(--color-success);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-postpone {
+            background: var(--color-border);
+            color: var(--color-text);
+        }
+
+        /* Add Scadenza FAB */
+        .fab {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: var(--color-primary);
+            color: white;
+            border-radius: 50%;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            padding: 12px;
+            background: white;
+            border-top: 2px solid var(--color-border);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s;
+            color: var(--color-text-light);
+        }
+
+        .nav-item.active {
+            color: var(--color-primary);
+            background: #eef2ff;
+        }
+
+        .nav-item span {
+            font-size: 24px;
+        }
+
+        .nav-item label {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            max-width: 400px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--color-text-light);
+        }
+
+        /* Achievement Popup */
+        .achievement-popup {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.5s;
+            max-width: 300px;
+            text-align: center;
+        }
+
+        .achievement-popup.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .achievement-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .achievement-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        /* Profile Page */
+        .profile-header {
+            text-align: center;
+            padding: 24px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            margin: 0 auto 16px;
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .profile-level {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+
+        .rewards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .reward-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .reward-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .reward-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .reward-desc {
+            font-size: 12px;
+            color: var(--color-text-light);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--color-text-light);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            color: var(--color-text);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Report Screen Styles */
+        .period-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 8px;
+            border-radius: 12px;
+        }
+
+        .period-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid var(--color-border);
+            background: white;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--color-text);
+        }
+
+        .period-btn.active {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .summary-icon {
+            font-size: 36px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-bg);
+            border-radius: 12px;
+        }
+
+        .summary-content {
+            flex: 1;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: var(--color-text-light);
+            margin-bottom: 4px;
+        }
+
+        .summary-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--color-primary);
+        }
+
+        .report-section {
+            margin-bottom: 24px;
+        }
+
+        .report-subtitle {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: var(--color-text);
+        }
+
+        .breakdown-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .breakdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .breakdown-label {
+            font-weight: 600;
+            color: var(--color-text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .breakdown-amount {
+            font-weight: bold;
+            color: var(--color-primary);
+        }
+
+        .breakdown-bar {
+            height: 8px;
+            background: var(--color-border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 4px;
+        }
+
+        .breakdown-fill {
+            height: 100%;
+            background: var(--color-primary);
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+
+        .breakdown-percentage {
+            font-size: 12px;
+            color: var(--color-text-light);
+        }
+
+        .payment-item {
+            background: white;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .payment-info {
+            flex: 1;
+        }
+
+        .payment-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+            color: var(--color-text);
+        }
+
+        .payment-meta {
+            font-size: 12px;
+            color: var(--color-text-light);
+            display: flex;
+            gap: 12px;
+        }
+
+        .payment-amount {
+            font-weight: bold;
+            color: var(--color-success);
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎮 ScadenzApp</h1>
+            <div class="subtitle">Trasforma le scadenze in gioco!</div>
+        </div>
+
+        <!-- Stats Bar (hidden during onboarding) -->
+        <div class="stats-bar hidden" id="statsBar">
+            <div class="stat-item">
+                <div class="stat-value" id="xpDisplay">0</div>
+                <div class="stat-label">XP</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="levelDisplay">1</div>
+                <div class="stat-label">Livello</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="streakDisplay">0</div>
+                <div class="stat-label">Streak 🔥</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Onboarding Screen -->
+            <div id="onboardingScreen" class="onboarding">
+                <div class="onboarding-avatar">👋</div>
+                <h2>Benvenuto in ScadenzApp!</h2>
+                <p>Trasforma il caos delle bollette in un gioco divertente. Guadagna XP, sali di livello e vinci premi reali!</p>
+
+                <div class="form-group">
+                    <label>Il tuo nome</label>
+                    <input type="text" id="userName" placeholder="Es. Mario">
+                </div>
+
+                <div class="form-group">
+                    <label>Scegli il tuo eroe</label>
+                    <div class="avatar-selector">
+                        <div class="avatar-option" data-avatar="🦸">
+                            <div class="avatar-img">🦸</div>
+                            <div class="avatar-name">Supereroe</div>
+                        </div>
+                        <div class="avatar-option" data-avatar="🦸‍♀️">
+                            <div class="avatar-img">🦸‍♀️</div>
+                            <div class="avatar-name">Supereroina</div>
+                        </div>
+                        <div class="avatar-option" data-avatar="🦊">
+                            <div class="avatar-img">🦊</div>
+                            <div class="avatar-name">Volpe</div>
+                        </div>
+                        <div class="avatar-option" data-avatar="🦁">
+                            <div class="avatar-img">🦁</div>
+                            <div class="avatar-name">Leone</div>
+                        </div>
+                        <div class="avatar-option" data-avatar="🐼">
+                            <div class="avatar-img">🐼</div>
+                            <div class="avatar-name">Panda</div>
+                        </div>
+                        <div class="avatar-option" data-avatar="🐯">
+                            <div class="avatar-img">🐯</div>
+                            <div class="avatar-name">Tigre</div>
+                        </div>
+                        <div class="avatar-option" data-avatar="🦅">
+                            <div class="avatar-img">🦅</div>
+                            <div class="avatar-name">Aquila</div>
+                        </div>
+                        <div class="avatar-option" data-avatar="🐺">
+                            <div class="avatar-img">🐺</div>
+                            <div class="avatar-name">Lupo</div>
+                        </div>
+                        <div class="avatar-option" data-avatar="🦄">
+                            <div class="avatar-img">🦄</div>
+                            <div class="avatar-name">Unicorno</div>
+                        </div>
+                        <div class="avatar-option" data-avatar="🐉">
+                            <div class="avatar-img">🐉</div>
+                            <div class="avatar-name">Drago</div>
+                        </div>
+                        <div class="avatar-option" data-avatar="🦉">
+                            <div class="avatar-img">🦉</div>
+                            <div class="avatar-name">Gufo</div>
+                        </div>
+                        <div class="avatar-option" data-avatar="🐻">
+                            <div class="avatar-img">🐻</div>
+                            <div class="avatar-name">Orso</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="startBtn">Inizia l'Avventura! 🚀</button>
+            </div>
+
+            <!-- Dashboard Screen -->
+            <div id="dashboardScreen" class="hidden">
+                <div class="section-title">Le Tue Scadenze</div>
+                <div id="scadenzeList"></div>
+
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-state-icon">📋</div>
+                    <div>Nessuna scadenza ancora!</div>
+                    <div>Clicca il pulsante + per aggiungerne una</div>
+                </div>
+            </div>
+
+            <!-- Report Screen -->
+            <div id="reportScreen" class="hidden">
+                <div class="section-title">📊 Report Spese</div>
+                
+                <!-- Period Selector -->
+                <div class="period-selector">
+                    <button class="period-btn active" data-period="month">Mese</button>
+                    <button class="period-btn" data-period="quarter">Trimestre</button>
+                    <button class="period-btn" data-period="year">Anno</button>
+                    <button class="period-btn" data-period="all">Tutto</button>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="summary-icon">💰</div>
+                        <div class="summary-content">
+                            <div class="summary-label">Totale Spese</div>
+                            <div class="summary-value" id="totalSpese">€0</div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon">📅</div>
+                        <div class="summary-content">
+                            <div class="summary-label">Scadenze Pagate</div>
+                            <div class="summary-value" id="totalPagate">0</div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon">📈</div>
+                        <div class="summary-content">
+                            <div class="summary-label">Media Mensile</div>
+                            <div class="summary-value" id="mediaMensile">€0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Breakdown by Category -->
+                <div class="report-section">
+                    <h3 class="report-subtitle">Per Categoria</h3>
+                    <div id="categoryBreakdown"></div>
+                </div>
+
+                <!-- Breakdown by Payment Method -->
+                <div class="report-section">
+                    <h3 class="report-subtitle">Per Metodo di Pagamento</h3>
+                    <div id="paymentBreakdown"></div>
+                </div>
+
+                <!-- Detailed List -->
+                <div class="report-section">
+                    <h3 class="report-subtitle">Dettaglio Pagamenti</h3>
+                    <div id="paymentsList"></div>
+                </div>
+
+                <!-- Share Button -->
+                <button class="btn btn-primary" id="shareReportBtn" style="margin-top: 20px;">
+                    📤 Condividi Report
+                </button>
+            </div>
+
+            <!-- Profile Screen -->
+            <div id="profileScreen" class="hidden">
+                <div class="profile-header">
+                    <div class="profile-avatar" id="profileAvatar">👨</div>
+                    <div class="profile-name" id="profileName">Mario</div>
+                    <div class="profile-level">Livello <span id="profileLevel">1</span> - <span id="profileXP">0</span>/100 XP</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="profileProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="section-title">🏆 I Tuoi Premi</div>
+                <div class="rewards-grid">
+                    <div class="reward-card">
+                        <div class="reward-icon">🎖️</div>
+                        <div class="reward-title">Primo Passo</div>
+                        <div class="reward-desc">Prima scadenza salvata</div>
+                    </div>
+                    <div class="reward-card">
+                        <div class="reward-icon">⭐</div>
+                        <div class="reward-title">Streak 7</div>
+                        <div class="reward-desc">7 giorni consecutivi</div>
+                    </div>
+                    <div class="reward-card">
+                        <div class="reward-icon">🎁</div>
+                        <div class="reward-title">Negozio</div>
+                        <div class="reward-desc">Premi reali disponibili</div>
+                    </div>
+                    <div class="reward-card">
+                        <div class="reward-icon">🔥</div>
+                        <div class="reward-title">Master</div>
+                        <div class="reward-desc">20 scadenze completate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active" data-screen="dashboard">
+                <span>🏠</span>
+                <label>Home</label>
+            </div>
+            <div class="nav-item" data-screen="profile">
+                <span>👤</span>
+                <label>Profilo</label>
+            </div>
+            <div class="nav-item" data-screen="report">
+                <span>📊</span>
+                <label>Report</label>
+            </div>
+        </div>
+
+        <!-- FAB Button -->
+        <button class="fab hidden" id="addBtn">+</button>
+    </div>
+
+    <!-- Add Scadenza Modal -->
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nuova Scadenza</h3>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+
+            <div class="form-group">
+                <label>Tipo di scadenza</label>
+                <select id="scadenzaTipo" onchange="handleTipoChange()">
+                    <option value="bolletta">💡 Bolletta (Luce/Gas/Acqua)</option>
+                    <option value="affitto">🏠 Affitto</option>
+                    <option value="bollo">🚗 Bollo Auto</option>
+                    <option value="assicurazione">🛡️ Assicurazione</option>
+                    <option value="scuola">🎒 Pagamento Scuola</option>
+                    <option value="abbonamento">📱 Abbonamento</option>
+                    <option value="altro">📋 Altro</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Descrizione</label>
+                <input type="text" id="scadenzaDesc" placeholder="Es. Bolletta Enel">
+            </div>
+
+            <div class="form-group">
+                <label>Data di scadenza</label>
+                <input type="date" id="scadenzaData">
+            </div>
+
+            <div class="form-group">
+                <label>Importo (€)</label>
+                <input type="number" id="scadenzaImporto" placeholder="Es. 120">
+            </div>
+
+            <div class="form-group">
+                <label>Metodo di pagamento</label>
+                <select id="scadenzaPagamento">
+                    <option value="contanti">💵 Contanti</option>
+                    <option value="conto">🏦 Conto Corrente</option>
+                    <option value="carta">💳 Carta di Credito</option>
+                    <option value="bancomat">💳 Bancomat</option>
+                    <option value="bonifico">📄 Bonifico</option>
+                    <option value="rid">🔄 RID/Addebito Automatico</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Si ripete?</label>
+                <select id="scadenzaRipeti">
+                    <option value="no">No</option>
+                    <option value="mensile">Ogni mese</option>
+                    <option value="bimestrale">Ogni 2 mesi</option>
+                    <option value="trimestrale">Ogni 3 mesi</option>
+                    <option value="annuale">Ogni anno</option>
+                </select>
+            </div>
+
+            <button class="btn btn-success" id="saveScadenza">Salva e Guadagna XP! ⭐</button>
+        </div>
+    </div>
+
+    <!-- Achievement Popup -->
+    <div class="achievement-popup" id="achievementPopup">
+        <div class="achievement-icon">🎉</div>
+        <div class="achievement-title">Achievement Sbloccato!</div>
+        <div class="achievement-desc">+50 XP</div>
+    </div>
+
+    <script>
+        // App State
+        const state = {
+            user: {
+                name: '',
+                avatar: '👨',
+                xp: 0,
+                level: 1,
+                streak: 0
+            },
+            scadenze: [],
+            payments: [],
+            onboarded: false
+        };
+
+        // Load state from localStorage
+        function loadState() {
+            const saved = localStorage.getItem('scadenzapp_state');
+            if (saved) {
+                Object.assign(state, JSON.parse(saved));
+                return true;
+            }
+            return false;
+        }
+
+        // Save state to localStorage
+        function saveState() {
+            localStorage.setItem('scadenzapp_state', JSON.stringify(state));
+        }
+
+        // Initialize app
+        function init() {
+            if (loadState() && state.onboarded) {
+                showDashboard();
+            } else {
+                showOnboarding();
+            }
+        }
+
+        // Show onboarding
+        function showOnboarding() {
+            document.getElementById('onboardingScreen').classList.remove('hidden');
+            document.getElementById('dashboardScreen').classList.add('hidden');
+            document.getElementById('profileScreen').classList.add('hidden');
+            document.getElementById('statsBar').classList.add('hidden');
+            document.getElementById('addBtn').classList.add('hidden');
+        }
+
+        // Show dashboard
+        function showDashboard() {
+            document.getElementById('onboardingScreen').classList.add('hidden');
+            document.getElementById('dashboardScreen').classList.remove('hidden');
+            document.getElementById('profileScreen').classList.add('hidden');
+            document.getElementById('statsBar').classList.remove('hidden');
+            document.getElementById('addBtn').classList.remove('hidden');
+            
+            updateStats();
+            renderScadenze();
+            updateNavigation('dashboard');
+        }
+
+        // Show profile
+        function showProfile() {
+            document.getElementById('onboardingScreen').classList.add('hidden');
+            document.getElementById('dashboardScreen').classList.add('hidden');
+            document.getElementById('profileScreen').classList.remove('hidden');
+            document.getElementById('reportScreen').classList.add('hidden');
+            document.getElementById('statsBar').classList.remove('hidden');
+            
+            updateProfilePage();
+            updateNavigation('profile');
+        }
+
+        // Show report
+        function showReport() {
+            document.getElementById('onboardingScreen').classList.add('hidden');
+            document.getElementById('dashboardScreen').classList.add('hidden');
+            document.getElementById('profileScreen').classList.add('hidden');
+            document.getElementById('reportScreen').classList.remove('hidden');
+            document.getElementById('statsBar').classList.remove('hidden');
+            
+            generateReport('month');
+            updateNavigation('report');
+        }
+
+        // Update stats bar
+        function updateStats() {
+            document.getElementById('xpDisplay').textContent = state.user.xp;
+            document.getElementById('levelDisplay').textContent = state.user.level;
+            document.getElementById('streakDisplay').textContent = state.user.streak;
+        }
+
+        // Update profile page
+        function updateProfilePage() {
+            document.getElementById('profileAvatar').textContent = state.user.avatar;
+            document.getElementById('profileName').textContent = state.user.name;
+            document.getElementById('profileLevel').textContent = state.user.level;
+            
+            const xpForNextLevel = state.user.level * 100;
+            const currentXP = state.user.xp % xpForNextLevel;
+            document.getElementById('profileXP').textContent = currentXP;
+            
+            const progress = (currentXP / xpForNextLevel) * 100;
+            document.getElementById('profileProgress').style.width = progress + '%';
+        }
+
+        // Update navigation
+        function updateNavigation(activeScreen) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.screen === activeScreen) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // Render scadenze list
+        function renderScadenze() {
+            const container = document.getElementById('scadenzeList');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (state.scadenze.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            
+            // Sort by date
+            const sorted = [...state.scadenze].sort((a, b) => new Date(a.data) - new Date(b.data));
+            
+            container.innerHTML = sorted.map((scadenza, index) => {
+                const daysLeft = getDaysLeft(scadenza.data);
+                const urgencyClass = daysLeft <= 2 ? 'urgente' : daysLeft <= 7 ? 'imminente' : '';
+                const badgeClass = daysLeft <= 2 ? 'badge-urgente' : daysLeft <= 7 ? 'badge-imminente' : 'badge-ok';
+                const badgeText = daysLeft < 0 ? 'Scaduta' : daysLeft === 0 ? 'Oggi!' : daysLeft === 1 ? 'Domani' : `${daysLeft} giorni`;
+                
+                const icon = getIconForType(scadenza.tipo);
+                
+                return `
+                    <div class="scadenza-card ${urgencyClass}">
+                        <div class="scadenza-header">
+                            <div class="scadenza-title">${icon} ${scadenza.descrizione}</div>
+                            <div class="scadenza-badge ${badgeClass}">${badgeText}</div>
+                        </div>
+                        <div class="scadenza-info">
+                            <span>📅 ${formatDate(scadenza.data)}</span>
+                            <span>💰 €${scadenza.importo}</span>
+                        </div>
+                        <div class="scadenza-actions">
+                            <button class="btn-small btn-complete" onclick="completeScadenza(${index})">✓ Completata</button>
+                            <button class="btn-small btn-postpone" onclick="postponeScadenza(${index})">↻ +7gg</button>
+                            <button class="btn-small btn-postpone" onclick="duplicateScadenza(${index})" title="Duplica">📋</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Get days left
+        function getDaysLeft(dateStr) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const targetDate = new Date(dateStr);
+            targetDate.setHours(0, 0, 0, 0);
+            const diff = targetDate - today;
+            return Math.ceil(diff / (1000 * 60 * 60 * 24));
+        }
+
+        // Format date
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('it-IT', { day: '2-digit', month: 'short' });
+        }
+
+        // Get icon for type
+        function getIconForType(type) {
+            const icons = {
+                bolletta: '💡',
+                affitto: '🏠',
+                bollo: '🚗',
+                assicurazione: '🛡️',
+                scuola: '🎒',
+                abbonamento: '📱',
+                altro: '📋'
+            };
+            return icons[type] || '📋';
+        }
+
+        // Generate report
+        function generateReport(period) {
+            const now = new Date();
+            let startDate = new Date();
+            
+            switch(period) {
+                case 'month':
+                    startDate.setMonth(now.getMonth() - 1);
+                    break;
+                case 'quarter':
+                    startDate.setMonth(now.getMonth() - 3);
+                    break;
+                case 'year':
+                    startDate.setFullYear(now.getFullYear() - 1);
+                    break;
+                case 'all':
+                    startDate = new Date(0);
+                    break;
+            }
+            
+            const filteredPayments = state.payments.filter(p => new Date(p.dataPagamento) >= startDate);
+            
+            // Calculate totals
+            const totalSpese = filteredPayments.reduce((sum, p) => sum + p.importo, 0);
+            const totalPagate = filteredPayments.length;
+            const monthsDiff = Math.max(1, (now - startDate) / (1000 * 60 * 60 * 24 * 30));
+            const mediaMensile = totalSpese / monthsDiff;
+            
+            document.getElementById('totalSpese').textContent = `€${totalSpese.toFixed(2)}`;
+            document.getElementById('totalPagate').textContent = totalPagate;
+            document.getElementById('mediaMensile').textContent = `€${mediaMensile.toFixed(2)}`;
+            
+            // Category breakdown
+            const byCategory = {};
+            filteredPayments.forEach(p => {
+                byCategory[p.tipo] = (byCategory[p.tipo] || 0) + p.importo;
+            });
+            
+            const categoryContainer = document.getElementById('categoryBreakdown');
+            categoryContainer.innerHTML = Object.entries(byCategory)
+                .sort((a, b) => b[1] - a[1])
+                .map(([tipo, amount]) => {
+                    const percentage = (amount / totalSpese * 100).toFixed(1);
+                    const icon = getIconForType(tipo);
+                    const tipoLabel = getTipoLabel(tipo);
+                    return `
+                        <div class="breakdown-item">
+                            <div class="breakdown-header">
+                                <div class="breakdown-label">${icon} ${tipoLabel}</div>
+                                <div class="breakdown-amount">€${amount.toFixed(2)}</div>
+                            </div>
+                            <div class="breakdown-bar">
+                                <div class="breakdown-fill" style="width: ${percentage}%"></div>
+                            </div>
+                            <div class="breakdown-percentage">${percentage}% del totale</div>
+                        </div>
+                    `;
+                }).join('');
+            
+            // Payment method breakdown
+            const byPayment = {};
+            filteredPayments.forEach(p => {
+                byPayment[p.metodoPagamento] = (byPayment[p.metodoPagamento] || 0) + p.importo;
+            });
+            
+            const paymentContainer = document.getElementById('paymentBreakdown');
+            paymentContainer.innerHTML = Object.entries(byPayment)
+                .sort((a, b) => b[1] - a[1])
+                .map(([metodo, amount]) => {
+                    const percentage = (amount / totalSpese * 100).toFixed(1);
+                    const icon = getPaymentIcon(metodo);
+                    const label = getPaymentLabel(metodo);
+                    return `
+                        <div class="breakdown-item">
+                            <div class="breakdown-header">
+                                <div class="breakdown-label">${icon} ${label}</div>
+                                <div class="breakdown-amount">€${amount.toFixed(2)}</div>
+                            </div>
+                            <div class="breakdown-bar">
+                                <div class="breakdown-fill" style="width: ${percentage}%"></div>
+                            </div>
+                            <div class="breakdown-percentage">${percentage}% del totale</div>
+                        </div>
+                    `;
+                }).join('');
+            
+            // Detailed list
+            const listContainer = document.getElementById('paymentsList');
+            listContainer.innerHTML = filteredPayments
+                .sort((a, b) => new Date(b.dataPagamento) - new Date(a.dataPagamento))
+                .map(p => {
+                    const icon = getIconForType(p.tipo);
+                    const paymentIcon = getPaymentIcon(p.metodoPagamento);
+                    return `
+                        <div class="payment-item">
+                            <div class="payment-info">
+                                <div class="payment-title">${icon} ${p.descrizione}</div>
+                                <div class="payment-meta">
+                                    <span>📅 ${formatDate(p.dataPagamento)}</span>
+                                    <span>${paymentIcon} ${getPaymentLabel(p.metodoPagamento)}</span>
+                                </div>
+                            </div>
+                            <div class="payment-amount">€${p.importo.toFixed(2)}</div>
+                        </div>
+                    `;
+                }).join('');
+            
+            if (filteredPayments.length === 0) {
+                listContainer.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><div>Nessun pagamento nel periodo selezionato</div></div>';
+            }
+        }
+
+        function getTipoLabel(tipo) {
+            const labels = {
+                bolletta: 'Bollette',
+                affitto: 'Affitto',
+                bollo: 'Bollo Auto',
+                assicurazione: 'Assicurazioni',
+                scuola: 'Scuola',
+                abbonamento: 'Abbonamenti',
+                altro: 'Altro'
+            };
+            return labels[tipo] || tipo;
+        }
+
+        function getPaymentIcon(metodo) {
+            const icons = {
+                contanti: '💵',
+                conto: '🏦',
+                carta: '💳',
+                bancomat: '💳',
+                bonifico: '📄',
+                rid: '🔄'
+            };
+            return icons[metodo] || '💰';
+        }
+
+        function getPaymentLabel(metodo) {
+            const labels = {
+                contanti: 'Contanti',
+                conto: 'Conto Corrente',
+                carta: 'Carta di Credito',
+                bancomat: 'Bancomat',
+                bonifico: 'Bonifico',
+                rid: 'RID/Addebito'
+            };
+            return labels[metodo] || metodo;
+        }
+
+        // Share report
+        function shareReport() {
+            const period = document.querySelector('.period-btn.active').dataset.period;
+            const totalSpese = document.getElementById('totalSpese').textContent;
+            const totalPagate = document.getElementById('totalPagate').textContent;
+            const mediaMensile = document.getElementById('mediaMensile').textContent;
+            
+            const periodLabels = {
+                month: 'ultimo mese',
+                quarter: 'ultimi 3 mesi',
+                year: 'ultimo anno',
+                all: 'tutto il periodo'
+            };
+            
+            const text = `📊 *Report Spese ScadenzApp*\n\n` +
+                `Periodo: ${periodLabels[period]}\n\n` +
+                `💰 Totale Spese: ${totalSpese}\n` +
+                `📅 Scadenze Pagate: ${totalPagate}\n` +
+                `📈 Media Mensile: ${mediaMensile}\n\n` +
+                `Gestione familiare sotto controllo! 🎯`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Report Spese ScadenzApp',
+                    text: text
+                });
+            } else {
+                navigator.clipboard.writeText(text);
+                showAchievement('Copiato!', 'Report copiato negli appunti', '📋');
+            }
+        }
+
+        // Complete scadenza
+        function completeScadenza(index) {
+            const scadenza = state.scadenze[index];
+            
+            // Record payment
+            state.payments.push({
+                tipo: scadenza.tipo,
+                descrizione: scadenza.descrizione,
+                importo: scadenza.importo,
+                metodoPagamento: scadenza.metodoPagamento || 'conto',
+                dataPagamento: new Date().toISOString().split('T')[0]
+            });
+            
+            // Add XP
+            const xpGained = 50;
+            state.user.xp += xpGained;
+            
+            // Check level up
+            const xpForNextLevel = state.user.level * 100;
+            if (state.user.xp >= xpForNextLevel) {
+                state.user.level++;
+                showAchievement('Level Up!', `Livello ${state.user.level}! +100 XP Bonus`, '🎊');
+                state.user.xp += 100;
+            } else {
+                showAchievement('Completata!', `+${xpGained} XP`, '⭐');
+            }
+            
+            // Update streak
+            state.user.streak++;
+            
+            // Handle repetition
+            if (scadenza.ripeti !== 'no') {
+                const newDate = new Date(scadenza.data);
+                switch(scadenza.ripeti) {
+                    case 'mensile': newDate.setMonth(newDate.getMonth() + 1); break;
+                    case 'bimestrale': newDate.setMonth(newDate.getMonth() + 2); break;
+                    case 'trimestrale': newDate.setMonth(newDate.getMonth() + 3); break;
+                    case 'annuale': newDate.setFullYear(newDate.getFullYear() + 1); break;
+                }
+                scadenza.data = newDate.toISOString().split('T')[0];
+            } else {
+                state.scadenze.splice(index, 1);
+            }
+            
+            saveState();
+            updateStats();
+            renderScadenze();
+        }
+
+        // Postpone scadenza
+        function postponeScadenza(index) {
+            const scadenza = state.scadenze[index];
+            const newDate = new Date(scadenza.data);
+            newDate.setDate(newDate.getDate() + 7);
+            scadenza.data = newDate.toISOString().split('T')[0];
+            
+            saveState();
+            renderScadenze();
+        }
+
+        // Handle tipo change - auto-fill description and settings
+        function handleTipoChange() {
+            const tipo = document.getElementById('scadenzaTipo').value;
+            const descInput = document.getElementById('scadenzaDesc');
+            const ripetiSelect = document.getElementById('scadenzaRipeti');
+            const importoInput = document.getElementById('scadenzaImporto');
+            
+            const templates = {
+                bolletta: { desc: 'Bolletta Enel', importo: '80', ripeti: 'bimestrale' },
+                affitto: { desc: 'Affitto casa', importo: '800', ripeti: 'mensile' },
+                bollo: { desc: 'Bollo auto', importo: '200', ripeti: 'annuale' },
+                assicurazione: { desc: 'Assicurazione auto', importo: '500', ripeti: 'annuale' },
+                scuola: { desc: 'Retta scolastica', importo: '150', ripeti: 'mensile' },
+                abbonamento: { desc: 'Netflix', importo: '15', ripeti: 'mensile' }
+            };
+            
+            const template = templates[tipo];
+            if (template) {
+                descInput.placeholder = template.desc;
+                importoInput.placeholder = template.importo;
+                ripetiSelect.value = template.ripeti;
+            }
+        }
+
+        // Duplicate scadenza
+        function duplicateScadenza(index) {
+            const originalIndex = state.scadenze.findIndex((s, i) => {
+                const sorted = [...state.scadenze].sort((a, b) => new Date(a.data) - new Date(b.data));
+                return sorted[index] === s;
+            });
+            
+            const scadenza = state.scadenze[originalIndex];
+            const newDate = new Date(scadenza.data);
+            newDate.setMonth(newDate.getMonth() + 1);
+            
+            document.getElementById('scadenzaTipo').value = scadenza.tipo;
+            document.getElementById('scadenzaDesc').value = scadenza.descrizione;
+            document.getElementById('scadenzaData').value = newDate.toISOString().split('T')[0];
+            document.getElementById('scadenzaImporto').value = scadenza.importo;
+            document.getElementById('scadenzaRipeti').value = scadenza.ripeti;
+            
+            document.getElementById('addModal').classList.add('active');
+        }
+
+        // Show achievement
+        function showAchievement(title, desc, icon) {
+            const popup = document.getElementById('achievementPopup');
+            popup.querySelector('.achievement-icon').textContent = icon;
+            popup.querySelector('.achievement-title').textContent = title;
+            popup.querySelector('.achievement-desc').textContent = desc;
+            
+            popup.classList.add('show');
+            setTimeout(() => {
+                popup.classList.remove('show');
+            }, 3000);
+        }
+
+        // Event listeners
+        document.getElementById('startBtn').addEventListener('click', () => {
+            const name = document.getElementById('userName').value.trim();
+            if (!name) {
+                alert('Inserisci il tuo nome!');
+                return;
+            }
+            
+            const selectedAvatar = document.querySelector('.avatar-option.selected');
+            if (!selectedAvatar) {
+                alert('Scegli un avatar!');
+                return;
+            }
+            
+            state.user.name = name;
+            state.user.avatar = selectedAvatar.dataset.avatar;
+            state.onboarded = true;
+            
+            saveState();
+            showDashboard();
+            showAchievement('Benvenuto!', '+100 XP Bonus Iniziale', '🎉');
+            state.user.xp = 100;
+            saveState();
+            updateStats();
+        });
+
+        // Avatar selection
+        document.querySelectorAll('.avatar-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('selected'));
+                option.classList.add('selected');
+            });
+        });
+
+        // Navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const screen = item.dataset.screen;
+                if (screen === 'dashboard') {
+                    showDashboard();
+                } else if (screen === 'profile') {
+                    showProfile();
+                } else if (screen === 'report') {
+                    showReport();
+                }
+            });
+        });
+
+        // Add button
+        document.getElementById('addBtn').addEventListener('click', () => {
+            document.getElementById('addModal').classList.add('active');
+            // Set default date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('scadenzaData').value = tomorrow.toISOString().split('T')[0];
+        });
+
+        // Close modal
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('addModal').classList.remove('active');
+        });
+
+        // Save scadenza
+        document.getElementById('saveScadenza').addEventListener('click', () => {
+            const tipo = document.getElementById('scadenzaTipo').value;
+            const descrizione = document.getElementById('scadenzaDesc').value.trim();
+            const data = document.getElementById('scadenzaData').value;
+            const importo = document.getElementById('scadenzaImporto').value;
+            const ripeti = document.getElementById('scadenzaRipeti').value;
+            
+            if (!descrizione || !data || !importo) {
+                alert('Compila tutti i campi!');
+                return;
+            }
+            
+            const metodoPagamento = document.getElementById('scadenzaPagamento').value;
+            
+            state.scadenze.push({
+                tipo,
+                descrizione,
+                data,
+                importo: parseFloat(importo),
+                ripeti,
+                metodoPagamento
+            });
+            
+            // Add XP for creating scadenza
+            state.user.xp += 25;
+            
+            saveState();
+            updateStats();
+            renderScadenze();
+            
+            document.getElementById('addModal').classList.remove('active');
+            
+            // Reset form
+            document.getElementById('scadenzaDesc').value = '';
+            document.getElementById('scadenzaImporto').value = '';
+            
+            showAchievement('Scadenza Aggiunta!', '+25 XP', '🎯');
+        });
+
+        // Period selector
+        document.querySelectorAll('.period-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                generateReport(btn.dataset.period);
+            });
+        });
+
+        // Share report button
+        document.getElementById('shareReportBtn').addEventListener('click', shareReport);
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>
+
